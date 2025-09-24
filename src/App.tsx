@@ -35,7 +35,7 @@ const App = () => {
   return (
     <div>
       <Banner title={Schedule.title} />
-      <CourseList courses={Object.values(Schedule.courses)} />
+      <CourseList courses={Schedule.courses} />
     </div>
   );
 }

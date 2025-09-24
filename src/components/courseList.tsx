@@ -4,20 +4,24 @@ type Course = {
     meets: string,
     title: string
 }
-type CourseProps = {
-    courses : Course[]
-}
+interface CourseProps {
+    courses: Record<string, Course>
+  }
 const CourseList = ({courses}:CourseProps) => {
     return (
-        <div>
-            <h2 className="text-2xl font-bold my-4">Course List</h2>
-            <ul className="list-disc pl-5">
-                {courses.map((course, index) => (
-                    <li key={index} className="mb-2">
-                        <span className="font-semibold">{course.term} {course.number}:</span> {course.title} <span className="text-sm text-gray-600">({course.meets})</span>
-                    </li>
-                ))}
-            </ul>
+        <div className="grid gap-3 p-4 m-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 overflow-auto">
+            {Object.entries(courses).map(([id, course]) => (
+                <div key={id} className="border-2 border-gray-200 h-45 flex flex-col justify-between rounded-2xl bg-white p-4 overflow-auto">
+                    <div>
+                        <h2 className="font-semibold">{course.term} CS {course.number}</h2>
+                        <p>{course.title}</p>
+                    </div>
+                    <div className="text-gray-400">
+                        <hr />
+                        <p>{course.meets}</p>
+                    </div>
+                </div>
+            ))}
         </div>
     )
 }
