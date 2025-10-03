@@ -1,10 +1,10 @@
-type Course = {
-    term: string,
-    number: string, 
-    meets: string,
-    title: string
+export interface Course {
+    term: string;
+    number: string;
+    meets: string;
+    title: string;
 }
-interface CourseProps {
+export interface CourseProps {
     courses: Record<string, Course>
   }
 const CourseList = ({courses}:CourseProps) => {
