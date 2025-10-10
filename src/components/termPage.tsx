@@ -10,6 +10,7 @@ interface TermPageProps {
 
 const TermPage = (props: TermPageProps) => {
     const [selectedTerm, setSelectedTerm] = useState("Fall");
+    const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
     const terms = [...new Set(Object.values(props.courses).map((course) => course.term))];
     const filteredCourses = Object.fromEntries(
         Object.entries(props.courses).filter(([, course]) => course.term === selectedTerm)
@@ -18,7 +19,7 @@ const TermPage = (props: TermPageProps) => {
     return (
         <div>
             <TermSelector options={terms} defaultSelected={selectedTerm} setSelected={setSelectedTerm} />
-            <CourseList courses={filteredCourses} />
+            <CourseList courses={filteredCourses} selectedCourses={selectedCourses} setSelectedCourses={setSelectedCourses} />
         </div>
         );
 
