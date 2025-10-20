@@ -37,7 +37,7 @@ const TermPage = (props: TermPageProps) => {
             <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
                 <SchedulePopup courses={props.courses} selectedCourses={selectedCourses} />
             </Modal>
-            <CourseList courses={filteredCourses} selectedCourses={selectedCourses} setSelectedCourses={setSelectedCourses} />
+            <CourseList courses={filteredCourses} selectedCourses={selectedCourses} setSelectedCourses={setSelectedCourses} allCourses={props.courses}/>
         </div>
         );
 

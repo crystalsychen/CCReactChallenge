@@ -13,12 +13,17 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.13",
+    "@tanstack/react-router": "^1.133.15",
+    "@tanstack/react-router-devtools": "^1.133.15",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-router": "^7.9.4",
     "tailwindcss": "^4.1.13"
   },
   "devDependencies": {
     "@eslint/js": "^9.35.0",
+    "@tanstack/router-plugin": "^1.133.15",
+    "@tanstack/router-vite-plugin": "^1.133.15",
     "@testing-library/react": "^16.3.0",
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",

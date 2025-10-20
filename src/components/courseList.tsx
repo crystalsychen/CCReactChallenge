@@ -1,5 +1,6 @@
 import type { Dispatch, SetStateAction } from "react";
 import { courseHasConflictWithSelected } from '../utilities/timeConflicts';
+import { Link } from "@tanstack/react-router";
 
 export interface Course {
     term: string;
@@ -11,16 +12,17 @@ export interface CourseProps {
     courses: Record<string, Course>;
     selectedCourses: string[];
     setSelectedCourses: Dispatch<SetStateAction<string[]>>;
+    allCourses: Record<string, Course>;
   }
 
 
-const CourseList = ({courses, selectedCourses, setSelectedCourses}:CourseProps) => {
+const CourseList = ({courses, selectedCourses, setSelectedCourses, allCourses}:CourseProps) => {
 
     return (
         <div className="grid gap-3 p-4 m-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 overflow-auto">
             {Object.entries(courses).map(([id, course]) => {
                 const isSelected = selectedCourses.includes(id);
-                const hasConflict = !isSelected && courseHasConflictWithSelected(course, selectedCourses, courses);
+                const hasConflict = !isSelected && courseHasConflictWithSelected(course, selectedCourses, allCourses);
                 const isSelectable = isSelected || !hasConflict;
                 
                 return(
@@ -48,7 +50,15 @@ const CourseList = ({courses, selectedCourses, setSelectedCourses}:CourseProps) 
                     </div>
                     <div className={hasConflict ? 'text-gray-400' : 'text-gray-400'}>
                         <hr />
-                        <p>{course.meets}</p>
+                        <div className="flex justify-between mt-3">
+                            <p>{course.meets}</p>
+                            <Link to="/course/edit/$courseId" 
+                                params={{ courseId: id }}
+                                onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                                className="ml-2 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
+                                Edit
+                            </Link>
+                        </div>
                     </div>
                 </div>
                 );
