@@ -1,6 +1,6 @@
 import Banner from './components/banner.tsx'
 import TermPage from './components/termPage.tsx'
-import { useJsonQuery } from './utilities/fetch.ts';
+import { useDataQuery } from './utilities/firebase.ts';
 
 interface Course {
   term: string;
@@ -15,7 +15,7 @@ interface CourseList {
 }
 
 const App = () => {
-  const [json, isLoading, error] = useJsonQuery('https://courses.cs.northwestern.edu/394/guides/data/cs-courses.php');
+  const [json, isLoading, error] = useDataQuery('/');
 
   if (error) return <h1>Error loading user data: {`${error}`}</h1>;
   if (isLoading) return <h1>Loading user data...</h1>;

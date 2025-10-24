@@ -1,9 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import TermPage from '../components/termPage'
-import {useJsonQuery} from '../utilities/fetch'
 import Banner from '../components/banner'
-
-const url = 'https://courses.cs.northwestern.edu/394/guides/data/cs-courses.php';
+import { useDataQuery } from '../utilities/firebase'
 
 interface Course {
     term: string;
@@ -18,7 +16,7 @@ interface CourseList {
 }
 
 function Index() {
-  const [json, isLoading, error] = useJsonQuery(url);
+  const [json, isLoading, error] = useDataQuery('/');
 
   if (error) return <h1>Error loading user data: {`${error}`}</h1>;
   if (isLoading) return <h1>Loading user data...</h1>;
