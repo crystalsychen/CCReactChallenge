@@ -1,39 +1,86 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import type { Course } from './courseList';
 import { 
     validateCourseForm, 
     type ValidationErrors,
     type CourseFormData 
 } from '../utilities/courseValidation';
+import { getDatabase, ref, update } from 'firebase/database';
+
 
 interface CourseEditFormProps {
     course: Course;
+    courseId: string;
     onCancel: () => void;
+    onSaved?: (updatedCourse: Course) => void;
 }
 
-const CourseEditForm = ({ course, onCancel }: CourseEditFormProps) => {
+const CourseEditForm = ({ course, courseId, onCancel, onSaved }: CourseEditFormProps) => {
     const [title, setTitle] = useState(course.title);
     const [term, setTerm] = useState(course.term);
     const [number, setNumber] = useState(course.number);
     const [meets, setMeets] = useState(course.meets);
     const [errors, setErrors] = useState<ValidationErrors>({});
     const [touched, setTouched] = useState<Record<string, boolean>>({});
+    const [submitting, setSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState<string | undefined>();
+
+    const formData: CourseFormData = useMemo( 
+        () => ({ title:title.trim(), term, number: number.trim(), meets: meets.trim() }),[title, term, number, meets]
+    ); 
 
     // Validate form whenever data changes
     useEffect(() => {
-        const formData: CourseFormData = { title, term, number, meets };
         const validationErrors = validateCourseForm(formData);
         setErrors(validationErrors);
-    }, [title, term, number, meets]);
+    }, [formData]);
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        setTouched({ title: true, term: true, number: true, meets: true });
-    };
+    const changeFields = useMemo( () => {
+        const diff: Partial<Course> = {};
+        if(formData.title !== course.title) diff.title = formData.title;
+        if(formData.term !== course.term) diff.term = formData.term;
+        if(formData.number !== course.number) diff.number = formData.number;
+        if(formData.meets !== course.meets) diff.meets = formData.meets;
+        return diff;
+    }, [course, formData] );
+
+    const hasErrors = Object.values(errors).some(error => error !== undefined);
+    const isDirty = Object.keys(changeFields).length > 0;
 
     const handleFieldBlur = (field: string) => {
         setTouched(prev => ({ ...prev, [field]: true }));
     };
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setTouched({ title: true, term: true, number: true, meets: true });
+        setSubmitError(undefined);
+
+        if (hasErrors) return; 
+        if (!isDirty) return; 
+
+        try{
+            setSubmitting(true);
+            const db = getDatabase(); 
+            
+            // Use the courseId (like "F101") for the Firebase path
+            await update(ref(db, `courses/${courseId}`), formData);
+            
+            onSaved?.({
+                title: formData.title,
+                term: formData.term,
+                number: formData.number,
+                meets: formData.meets
+            });
+            onCancel(); 
+        } catch (error: unknown) {
+            setSubmitError(error instanceof Error ? error.message : 'Error saving course');
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50"
@@ -136,6 +183,11 @@ const CourseEditForm = ({ course, onCancel }: CourseEditFormProps) => {
                             <p className="mt-1 text-sm text-red-600">{errors.meets}</p>
                         )}
                     </div>
+                    {submitError && (
+                        <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded p-2">
+                            {submitError}
+                        </div>
+                    )}
                     
                     <div className="flex justify-end space-x-3 pt-4">
                         <button
@@ -146,9 +198,11 @@ const CourseEditForm = ({ course, onCancel }: CourseEditFormProps) => {
                             Cancel
                         </button>
                         <button type="submit"
+                            disabled={submitting || hasErrors || !isDirty}
                             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                            aria-disabled={submitting || hasErrors || !isDirty}
                         >
-                            Submit
+                            {submitting ? 'Saving...' : 'Submit'}
                         </button>
                     </div>
                 </form>

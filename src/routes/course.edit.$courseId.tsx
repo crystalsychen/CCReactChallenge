@@ -1,8 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useJsonQuery } from '../utilities/fetch'
-import CourseForm from '../components/courseEditForm'
+import CourseEditForm from '../components/courseEditForm'
+import { useDataQuery } from '../utilities/firebase';
 
-const url = 'https://courses.cs.northwestern.edu/394/guides/data/cs-courses.php';
 
 interface Course {
     term: string;
@@ -19,7 +18,7 @@ interface CourseList {
 function CourseEdit() {
   const { courseId } = Route.useParams()
   const navigate = useNavigate()
-  const [json, isLoading, error] = useJsonQuery(url);
+  const [json, isLoading, error] = useDataQuery('/');
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -38,7 +37,7 @@ function CourseEdit() {
 
   return (
     <div>
-      <CourseForm course={course} onCancel={handleCancel} />
+      <CourseEditForm course={course} courseId={course.number} onCancel={handleCancel} />
     </div>
   );
 }
