@@ -37,7 +37,7 @@ function CourseEdit() {
 
   return (
     <div>
-      <CourseEditForm course={course} courseId={course.number} onCancel={handleCancel} />
+      <CourseEditForm course={course} courseId={courseId} onCancel={handleCancel} />
     </div>
   );
 }
