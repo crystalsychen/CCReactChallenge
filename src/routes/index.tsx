@@ -1,7 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import TermPage from '../components/termPage'
 import Banner from '../components/banner'
-import { useDataQuery } from '../utilities/firebase'
+import { useDataQuery, initializeAdminUsers } from '../utilities/firebase'
+import { useEffect } from 'react';
 
 interface Course {
     term: string;
@@ -17,6 +18,10 @@ interface CourseList {
 
 function Index() {
   const [json, isLoading, error] = useDataQuery('/');
+
+  useEffect(() => {
+      initializeAdminUsers().catch(console.error);
+  }, []);
 
   if (error) return <h1>Error loading user data: {`${error}`}</h1>;
   if (isLoading) return <h1>Loading user data...</h1>;

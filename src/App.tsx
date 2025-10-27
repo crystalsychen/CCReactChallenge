@@ -1,6 +1,7 @@
 import Banner from './components/banner.tsx'
 import TermPage from './components/termPage.tsx'
-import { useDataQuery } from './utilities/firebase.ts';
+import { useDataQuery, initializeAdminUsers } from './utilities/firebase.ts';
+import { useEffect } from 'react';
 
 interface Course {
   term: string;
@@ -16,6 +17,10 @@ interface CourseList {
 
 const App = () => {
   const [json, isLoading, error] = useDataQuery('/');
+
+  useEffect(() => {
+    initializeAdminUsers().catch(console.error);
+  }, []);
 
   if (error) return <h1>Error loading user data: {`${error}`}</h1>;
   if (isLoading) return <h1>Loading user data...</h1>;

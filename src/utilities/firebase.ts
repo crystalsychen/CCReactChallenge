@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { initializeApp } from "firebase/app";
-import { getDatabase, onValue, ref } from 'firebase/database';
+import { getDatabase, onValue, ref, get, set} from 'firebase/database';
 import { flushSync } from 'react-dom'
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut, type NextOrObserver, type User} from 'firebase/auth';
 
@@ -74,4 +74,29 @@ export const useAuthState = (): AuthState => {
     }), [])
 
   return {user, isAuthenticated, isInitialLoading };
+};
+
+export const initializeAdminUsers = async () => {
+  const db = getDatabase();
+  const adminRef = ref(db, 'admins');
+  
+  const snapshot = await get(adminRef);
+  if (!snapshot.exists()) {
+    const initialAdmins = {
+      "h0J9tvP97VOVwsabuVPggNkiwvC3": true,
+    };
+    
+    await set(adminRef, initialAdmins);
+    console.log('Admin users initialized');
+  }
+};
+
+// Hook to check if current user is admin
+export const useIsAdmin = () => {
+  const { user } = useAuthState();
+  const [adminData] = useDataQuery(user ? `admins/${user.uid}` : 'guest');
+  
+  if (!user) return false;
+  
+  return adminData === true;
 };

@@ -1,7 +1,7 @@
 import type { Dispatch, SetStateAction } from "react";
 import { courseHasConflictWithSelected } from '../utilities/timeConflicts';
 import { Link } from "@tanstack/react-router";
-import { useAuthState } from "../utilities/firebase";
+import { useProfile } from "../utilities/profile";
 
 export interface Course {
     term: string;
@@ -18,7 +18,7 @@ export interface CourseProps {
 
 
 const CourseList = ({courses, selectedCourses, setSelectedCourses, allCourses}:CourseProps) => {
-    const {user} = useAuthState();
+    const [user, isAdmin] = useProfile();
 
     return (
         <div className="grid gap-3 p-4 m-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 overflow-auto">
@@ -54,7 +54,7 @@ const CourseList = ({courses, selectedCourses, setSelectedCourses, allCourses}:C
                         <hr />
                         <div className="flex justify-between mt-3">
                             <p>{course.meets}</p>
-                            { user ?
+                            { user && isAdmin ?
                                 <Link to="/course/edit/$courseId" 
                                     params={{ courseId: id }}
                                     onClick={(e: React.MouseEvent) => e.stopPropagation()}
