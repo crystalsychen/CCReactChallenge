@@ -21,7 +21,7 @@ const CourseList = ({courses, selectedCourses, setSelectedCourses, allCourses}:C
     const [user, isAdmin] = useProfile();
 
     return (
-        <div className="grid gap-3 p-4 m-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 overflow-auto">
+        <div className="grid gap-3 p-4 m-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 overflow-auto" data-cy="course">
             {Object.entries(courses).map(([id, course]) => {
                 const isSelected = selectedCourses.includes(id);
                 const hasConflict = !isSelected && courseHasConflictWithSelected(course, selectedCourses, allCourses);

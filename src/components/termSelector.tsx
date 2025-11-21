@@ -20,7 +20,7 @@ const TermSelector = ({options, defaultSelected, setSelected}: termSelectorProps
                         setCurrentSelection(option)}
                         }/>
 
-                    <label htmlFor={option} className="ml-1">{option}</label>
+                    <label htmlFor={option} className="ml-1" data-cy={option}>{option}</label>
                 </div>
             ))}
         </div>
